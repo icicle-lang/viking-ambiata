@@ -1,12 +1,10 @@
 viking
 ======
 
-```
-The Vikings were daring masters of the sea. The shallow draught of their
-swift wooden longships meant that they were able to reach far inland by
-river and stream, striking and moving on before local forces could
-muster.
-```
+> The Vikings were daring masters of the sea. The shallow draught of their
+> swift wooden longships meant that they were able to reach far inland by
+> river and stream, striking and moving on before local forces could
+> muster.
 
 <img src="https://github.com/ambiata/viking/raw/master/img/viking.jpg" width="480" align="right"/>
 
