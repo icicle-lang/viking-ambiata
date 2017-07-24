@@ -45,6 +45,9 @@ import           Streaming (Stream, Of(..))
 -- instantiated as @Of a@ where 'Of' is a left-strict tuple.
 --
 -- @
+-- data Of a b =
+--   !a :> b
+--
 -- data Stream (Of a) m r =
 --     Step !(Of a (Stream (Of a) m r))
 --   | Effect (m (Stream (Of a) m r))
