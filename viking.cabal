@@ -27,6 +27,9 @@ library
 
   exposed-modules:
                        Viking
+                       Viking.Stream
+                       Viking.ByteStream
+                       Viking.Char8Stream
 
 test-suite test
   type:                exitcode-stdio-1.0
