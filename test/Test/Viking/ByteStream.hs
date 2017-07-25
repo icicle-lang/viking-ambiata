@@ -7,7 +7,12 @@ import           Control.Monad.Catch (throwM)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Trans.Resource (runResourceT)
 
+import qualified Data.ByteString as Strict
+import qualified Data.ByteString.Builder as Builder
+
 import           Hedgehog
+import qualified Hedgehog.Gen as Gen
+import qualified Hedgehog.Range as Range
 
 import           P
 
@@ -17,6 +22,7 @@ import           System.IO.Error (IOError, userError)
 import qualified System.IO.Temp as Temp
 
 import qualified Viking.ByteStream as ByteStream
+import qualified Viking.Stream as Stream
 
 import           X.Control.Monad.Trans.Either (runEitherT)
 
@@ -57,6 +63,19 @@ prop_write_file_exception =
       runEitherT $ ByteStream.writeFile (dir </> "foo") (throwM err)
 
     x === Left err
+
+prop_builders :: Property
+prop_builders =
+  property $ do
+    bss0 <- forAll . Gen.list (Range.linear 0 10) $ Gen.bytes (Range.linear 0 100)
+
+    bs <-
+      ByteStream.toStrict_ .
+        ByteStream.fromBuilders .
+        Stream.each $
+        fmap Builder.byteString bss0
+
+    Strict.concat bss0 === bs
 
 tests :: IO Bool
 tests =

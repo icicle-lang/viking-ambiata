@@ -21,6 +21,8 @@ module Viking.ByteStream (
   , hGetContents
   , hGetContentsN
   , hPut
+
+  , fromBuilders
   ) where
 
 import           Control.Monad.Catch (MonadCatch, try, bracket)
@@ -30,6 +32,8 @@ import           Control.Monad.Trans.Class (lift)
 import           Control.Monad.Trans.Control (MonadBaseControl, liftBaseOp)
 import           Control.Monad.Trans.Resource (MonadResource)
 
+import           Data.ByteString.Builder (Builder)
+import qualified Data.ByteString.Builder as Builder
 import qualified Data.ByteString.Streaming as Streaming
 import           Data.ByteString.Streaming hiding (ByteString, readFile, writeFile, hGetContents, hGetContentsN, hPut)
 import qualified Data.ByteString.Streaming.Internal as Streaming
@@ -40,7 +44,8 @@ import           System.IO (IO, FilePath, Handle, IOMode(..))
 import qualified System.IO as IO
 import           System.IO.Error (IOError)
 
-import           Viking (ByteStream)
+import           Viking
+import qualified Viking.Stream as Stream
 
 import           X.Control.Monad.Trans.Either (EitherT, pattern EitherT)
 import qualified X.Control.Monad.Trans.Either as EitherT
@@ -116,3 +121,13 @@ hPut handle bss =
   EitherT . try $
     Streaming.hPut handle bss
 {-# INLINABLE hPut #-}
+
+fromBuilders :: Monad m => Stream (Of Builder) m r -> ByteStream m r
+fromBuilders =
+  let
+    fromElement (x :> r) = do
+      Streaming.fromLazy (Builder.toLazyByteString x)
+      pure r
+  in
+    Streaming.concat . Stream.maps fromElement
+{-# INLINABLE fromBuilders #-}
