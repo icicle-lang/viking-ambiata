@@ -1,14 +1,14 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module Viking.Stream (
-    module Streaming.Prelude
+    module Streaming
+  , module Streaming.Prelude
 
   , whenEmpty
   ) where
 
-import           Control.Monad.Trans.Class (lift)
-
 import           P
 
+import           Streaming
 import           Streaming.Prelude
 
 
