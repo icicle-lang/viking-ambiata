@@ -6,6 +6,8 @@
 module Viking.ByteStream (
     module Data.ByteString.Streaming
 
+  , consChunk
+
   , embed
 
   , hoistEither
@@ -37,6 +39,7 @@ import qualified Data.ByteString.Builder as Builder
 import qualified Data.ByteString.Streaming as Streaming
 import           Data.ByteString.Streaming hiding (ByteString, readFile, writeFile, hGetContents, hGetContentsN, hPut)
 import qualified Data.ByteString.Streaming.Internal as Streaming
+import           Data.ByteString.Streaming.Internal (consChunk)
 
 import           P
 
