@@ -27,12 +27,11 @@ module Viking.ByteStream (
   , fromBuilders
   ) where
 
-import           Control.Monad.Catch (MonadCatch, try, bracket)
+import           Control.Monad.Catch (MonadCatch, try)
 import           Control.Monad.IO.Class (MonadIO)
 import           Control.Monad.Morph (hoist)
 import           Control.Monad.Trans.Class (lift)
-import           Control.Monad.Trans.Control (MonadBaseControl, liftBaseOp)
-import           Control.Monad.Trans.Resource (MonadResource)
+import           Control.Monad.Trans.Resource (MonadResource, allocate, release)
 
 import           Data.ByteString.Builder (Builder)
 import qualified Data.ByteString.Builder as Builder
@@ -43,7 +42,7 @@ import           Data.ByteString.Streaming.Internal (consChunk)
 
 import           P
 
-import           System.IO (IO, FilePath, Handle, IOMode(..))
+import           System.IO (FilePath, Handle, IOMode(..))
 import qualified System.IO as IO
 import           System.IO.Error (IOError)
 
@@ -100,12 +99,13 @@ readFile =
   readFileN defaultChunkSize
 {-# INLINABLE readFile #-}
 
-writeFile :: (MonadBaseControl IO m, MonadIO m, MonadCatch m) => FilePath -> ByteStream m r -> EitherT IOError m r
+writeFile :: (MonadResource m, MonadCatch m) => FilePath -> ByteStream m r -> EitherT IOError m r
 writeFile path bss =
-  EitherT . try $
-    liftBaseOp
-      (bracket (IO.openBinaryFile path WriteMode) (IO.hClose))
-      (\h -> Streaming.hPut h bss)
+  EitherT . try $ do
+    (key, h) <- allocate (IO.openBinaryFile path WriteMode) IO.hClose
+    x <- Streaming.hPut h bss
+    release key
+    pure x
 {-# INLINABLE writeFile #-}
 
 hGetContentsN :: (MonadIO m, MonadCatch m) => Int -> Handle -> ByteStream (EitherT IOError m) ()
