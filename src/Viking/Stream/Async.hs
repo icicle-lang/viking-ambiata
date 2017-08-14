@@ -24,8 +24,10 @@ mapConcurrentlyN n f =
   Stream.mapM (Async.mapConcurrently f) .
   Stream.mapped Stream.toList .
   Stream.chunksOf n
+{-# INLINABLE mapConcurrentlyN #-}
 
 mapConcurrently :: MonadBaseControl IO m => (a -> m b) -> Stream (Of a) m r -> Stream (Of b) m r
 mapConcurrently f xs = do
   n <- liftBase getNumCapabilities
   mapConcurrentlyN n f xs
+{-# INLINABLE mapConcurrently #-}
