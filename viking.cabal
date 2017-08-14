@@ -18,6 +18,7 @@ library
                      , binary                          >= 0.7        && < 0.9
                      , bytestring                      == 0.10.*
                      , exceptions                      >= 0.6        && < 0.9
+                     , lifted-async                    == 0.9.*
                      , mmorph                          == 1.0.*
                      , monad-control                   == 1.0.*
                      , resourcet                       == 1.1.*
