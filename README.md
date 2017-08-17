@@ -60,18 +60,3 @@ transform :: Monad m => Conduit Int m String
 transform =
   Conduit.map (+ 1) =$= Conduit.map show
 ```
-
-Note from the example above, that conduits compose the wrong way. This
-makes conduit composition hard to follow when it is used in combination
-with function composition, because one needs to follow data flow in two
-different directions.
-
-For example, if we replace the example above with a single `Conduit.map`
-then we'd have to flip the pipeline order, shortly followed by flipping
-the nearest table:
-
-```hs
-transform :: Monad m => Conduit Int m String
-transform =
-  Conduit.map (show . (+ 1))
-```
