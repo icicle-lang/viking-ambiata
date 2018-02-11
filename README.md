@@ -48,7 +48,7 @@ transform =
 #### Viking
 
 ```hs
-transform :: Monad m => Stream (Of Int) m r -> Stream (Of Int) m r
+transform :: Monad m => Stream (Of Int) m r -> Stream (Of String) m r
 transform =
   Stream.map show . Stream.map (+ 1)
 ```
